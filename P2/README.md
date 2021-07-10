@@ -42,7 +42,7 @@ cd
 ```
 
 ### SOLUTION
-
+```
 oc new-app --name postgresql-persistent \
    --docker-image registry.redhat.io/rhel8/postgresql-12:1-43 \
    -e POSTGRESQL_USER=redhat \
@@ -62,3 +62,5 @@ oc new-app --name postgresql-persistent2 \
 
 oc delete all -l app=postgresql-persistent
 oc delete pvc postgresql-storage
+
+```
