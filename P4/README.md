@@ -32,7 +32,7 @@ oc delete project authorization-secrets
 lab authorization-secrets finish
 ```
 
-###
+### 4.04
  
 ```
 lab authorization-scc start
