@@ -1,5 +1,5 @@
 ## OPENSHIFT AUTH
-3.02 In this lab we will attach a Id Providers
+3.02 In this lab we will attach an Identity Provider
 ```
 lab auth-provider start
 source /usr/local/etc/ocp4.config
@@ -20,7 +20,7 @@ spec:
     type: HTPasswd
 Login with admin user test nodes
 Login with dev and test nodes
-Add manager user and login
+Add manager user with random pass and login
 Delete manager user
 List users
 List identities
