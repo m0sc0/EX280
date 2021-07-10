@@ -61,3 +61,5 @@ curl -s    http://gitlab.apps.ocp4.example.com/users/sign_in | grep '<title>'
 oc delete project authorization-scc
 lab authorization-scc finish
 ```
+
+### 4.05 4.02 + 4.04
