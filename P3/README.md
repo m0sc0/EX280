@@ -1,5 +1,5 @@
 ## OPENSHIFT AUTH
-3.02 In this lab we will attach an Identity Provider  
+### 3.02 In this lab we will attach an Identity Provider  
 ```
 lab auth-provider start
 source /usr/local/etc/ocp4.config
@@ -53,7 +53,7 @@ oc delete secret localusers -n openshift-config
 
 ```
 
-3.04 Role Based Access Control  
+### 3.04 Role Based Access Control  
 
 ```
 Remove cluster role self-provisioners from all user who are no cluster admins
@@ -89,4 +89,8 @@ oc login -u qa-engineer -p redhat
 oc scale deployment httpd --replicas 3
 
 oc adm policy add-cluster-role-to-group  --rolebinding-name self-provisioners  self-provisioner system:authenticated:oauth
+lab auth-rbac finish
 ```
+
+### 3.05 is a mix of 3.02 and 3.04
+ToDo  
