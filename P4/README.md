@@ -3,10 +3,12 @@
 ```
 lab authorization-secrets start
 Login with developer/developer
+Create new project called authorization-secrets
 Create a secret called mysql with --from-literal user=myuser --from-literal password=redhat123 --from-literal database=test_secrets --from-literal hostname=mysql
 Create new app called mysql registry.access.redhat.com/rhscl/mysql-57-rhel7:5.7-47 
 Add to deployment the secret with MYSQL prefix
 View if issues are solved
+Add a volume with the secret to the deployment mounted in /run/secrets/mysql
  
 Create a app called quotes with this image quay.io/redhattraining/famous-quotes:2.1
 Add QUOTES PREFIX and use the same secret/mysql
