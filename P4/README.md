@@ -43,7 +43,11 @@ The pod fails solve it
 Create sa caller gitlab-sa
 add scc anyuid to the sa
 Add sa to deployment
-expose route port 80
+expose route port 80 with hostname gitlab.apps.ocp4.example.com 
+Curl gitlab.apps.ocp4.example.com/users/sign_in
+Delete project
+lab authorization-scc finish
+
 
 ```
 ### SOLUTION
