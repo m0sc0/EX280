@@ -6,6 +6,7 @@ lab network-sdn start
 Login with developer, and create project called network-sdn
 cd ~/DO280/labs/network-sdn
 Create todo-db.yaml and cp db-data.sql to mysql pod at tmp/
+Copy yo items db de sql
 Create todo-frontend.yaml
 Expose frontend svc  --hostname todo.apps.ocp4.example.com
 Oc Debug why is not working (curl -v telnet://172.30.103.29:3306 and 8080 to frontend)
@@ -21,6 +22,7 @@ oc new-project network-sdn
 cd ~/DO280/labs/network-sdn
 oc create -f todo-db.yaml
 oc cp db-data.sql mysql-94dc6645b-hjjqb:/tmp/
+mysql -u root items < /tmp/db-data.sql
 oc create -f todo-frontend.yaml
 oc expose service frontend   --hostname todo.apps.ocp4.example.com
 oc logs frontend
@@ -30,4 +32,135 @@ oc debug -t deployment/mysql  --image registry.access.redhat.com/ubi8/ubi:8.0 (b
 oc edit svc/frontend
 lab network-sdn finish
 ```
+### 5.04  
+https://www.openshift.com/blog/self-serviced-end-to-end-encryption-approaches-for-applications-deployed-in-openshift  
+```
+lab network-ingress start
+Login as developer   
+Create project called network-ingress
+Create from file ~/DO280/labs/network-ingress/todo-app-v1.yaml
+Expose svc todo-http with hostname todo-http.apps.ocp4.example.com
+Test url
+Intercept comunication
+Now create a secure route with edge 
+curl
+Test with firefox
+Extract router-ca secret in namespace openshift-ingress-operator
+curl with crt
+Login again with developer and see that the comunication between pod and router is not encripted use debug with registry.access.redhat.com/ubi8/ubi:8.0
+Delete edge route
+Generate private key called training.key 2048
+CSR with name training.csr with key training.key subjet "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=todo-https.apps.ocp4.example.com"
+Generate signed certificate
+Create secret tls called todo-certs  with crt and key 
+Create todo-app-v2.yaml
+Create passtrought route port 8443 hostname todo-https.apps.ocp4.example.com
+curl with certs/training-CA.pem  the route
+cd
+oc delete project network-ingress
+lab network-ingress finish
 
+
+
+```
+
+
+### SOLUTION
+```
+lab network-ingress start
+oc login -u developer -p developer
+oc new-project network-ingress
+oc create -f  ~/DO280/labs/network-ingress/todo-app-v1.yaml
+oc expose svc todo-http --hostname todo-http.apps.ocp4.example.com
+sudo tcpdump -i eth0 -A  -n port 80 | grep js
+cd ~/DO280/labs/network-ingress
+oc create route edge todo-https  --service todo-http  --hostname todo-https.apps.ocp4.example.com
+curl  https://todo-https.apps.ocp4.example.com
+oc login -u admin -p redhat
+oc extract secrets/router-ca --keys tls.crt -n openshift-ingress-operator
+curl -I -v   --cacert tls.crt https://todo-https.apps.ocp4.example.com
+oc login -u developer -p developer
+oc get svc todo-http   -o jsonpath="{.spec.clusterIP}{'\n'}"
+oc debug -t deployment/todo-http  --image registry.access.redhat.com/ubi8/ubi:8.0
+curl -v 172.30.102.29 (is http behind the router to the pod)
+oc delete route todo-https
+cd certs; ls
+openssl genrsa -out training.key 2048
+openssl req -new  -subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=todo-https.apps.ocp4.example.com"   -key training.key -out training.csr
+openssl x509 -req -in training.csr   -passin file:passphrase.txt    -CA training-CA.pem -CAkey training-CA.key -CAcreateserial    -out training.crt -days 1825 -sha256 -extfile training.ext
+cd ~/DO280/labs/network-ingress
+oc create secret tls todo-certs    --cert certs/training.crt   --key certs/training.key
+oc create -f todo-app-v2.yaml
+oc describe pod todo-https-xxxx
+oc create route passthrough todo-https  --service todo-https --port 8443   --hostname todo-https.apps.ocp4.example.com
+curl -vvI   --cacert certs/training-CA.pem   https://todo-https.apps.ocp4.example.com
+cd
+oc delete project network-ingress
+lab network-ingress finish
+
+```
+
+### 5.06
+```
+lab network-policy start
+Login as dev
+Create network-policy project
+Create app called hello and test from quay.io/redhattraining/hello-world-nginx:v1.0
+Expose service hello
+Open a second therm and run ~/DO280/labs/network-policy/display-project-info.sh
+curl -s hello-network-policy.apps.ocp4.example.com | grep Hello
+Go to pods a curl to service ip and pod ip
+
+
+Create new project network-test
+Create app called sample-app quay.io/redhattraining/hello-world-nginx:v1.0
+Run a second term with ~/DO280/labs/network-policy/display-project-info.sh
+In sample pod test that it see pod hello in diferents namespaces curl helloip:8080 |  grep Hello
+Also to pod test
+
+Switch to network-policy project and edit /DO280/labs/network-policy/deny-all.yaml
+Create file
+Verify that from worker cant curl hello-network-policy.apps.ocp4.example.com
+Allow ~/DO280/labs/network-policy/allow-specific.yaml 
+Allow traffic from  sample-app in network-test to hello pod , port 8080 TCP
+
+Login with admin and label name=network-test th network-test namespace to match the allow-specific
+Test curl
+cd
+lab network-policy finish
+
+```
+
+### SOLUTION
+```
+lab network-policy start
+oc login -u developer -p developer
+oc new-project network-policy
+oc new-app --name hello --docker-image quay.io/redhattraining/hello-world-nginx:v1.0
+oc new-app --name test  --docker-image  quay.io/redhattraining/hello-world-nginx:v1.0
+oc expose service hello
+Run in second term ~/DO280/labs/network-policy/display-project-info.sh
+curl -s hello-network-policy.apps.ocp4.example.com | grep Hello
+
+oc new-project network-test
+oc new-app --name sample-app --docker-image   quay.io/redhattraining/hello-world-nginx:v1.0
+oc rsh sample-app-d5f945-spx9q curl 10.helloip:8080 |  grep Hello
+oc rsh sample-app-d5f945-spx9q curl 10.testip:8080 |  grep Hello
+
+
+oc project network-policy
+cd ~/DO280/labs/network-policy/
+vi deny-all.yaml (spec:podSelector: {})
+oc create -f deny-all.yaml
+curl -s hello-network-policy.apps.ocp4.example.com | grep Hello
+oc create -n network-policy -f   allow-specific.yaml
+
+oc login -u admin -p redhat
+oc label namespace network-test  name=network-test
+
+cd 
+lab network-policy finish
+
+```
+
+ 
