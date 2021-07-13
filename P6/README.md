@@ -74,3 +74,136 @@ lab schedule-pods finish
 
 ```
 
+
+
+### 6.04
+```
+1)
+lab schedule-limit start
+As developer create project schedule-limit
+Create a deployment  called hello-limit with image quay.io/redhattraining/hello-world-nginx:v1.0 and save it to ~/DO280/labs/schedule-limit/hello-limit.yaml
+Edit an add 3 cpu and 20M of memory
+Create the deploy and save-config
+Get events and solve issue "1200m"
+Get pods and scale to 4 replicas hello-limit
+Delete all with label app=hello-limit
+
+
+2)
+Create the resource ~/DO280/labs/schedule-limit/loadtest.yaml
+curl -X GET   http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/150/60
+http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/200/60
+
+3) 
+Login as admin/redhat
+Create quota called project-quota with har cpu 3, mem 1G and configmaps 3 in namespace schedule-limit
+Login as developer
+Generate 4 configs maps
+
+4)
+Login as admin/redhat
+create-bootstrap-project-template   -o yaml > /tmp/project-template.yaml
+Add 3cpu and 10Gi in hard of quota
+Add limit rangue 
+name: ${PROJECT_NAME}-limit and Quota
+defaultRequest: cpu: 30m memory: 30M
+oc create -f /tmp/project-template.yaml   -n openshift-config
+
+oc edit projects.config.openshift.io/cluster
+spec:
+  projectRequestTemplate:
+    name: project-request
+New-project template-test
+Get resourcequotas,limitranges
+delete project schedule-limit
+delete project template-test
+lab schedule-limit finish
+
+
+
+```
+
+### SOLUTION
+```
+1)
+lab schedule-limit start
+oc login -u developer -p developer 
+oc new-project schedule-limit
+oc create deployment hello-limit   --image quay.io/redhattraining/hello-world-nginx:v1.0   --dry-run=client -o yaml > ~/DO280/labs/schedule-limit/hello-limit.yaml
+vi ~/DO280/labs/schedule-limit/hello-limit.yaml
+        name: hello-world-nginx
+        resources:
+          requests:
+            cpu: "3"
+            memory: 20Mi
+oc create --save-config  -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+oc get pods
+oc get events --field-selector type=Warning
+vim ~/DO280/labs/schedule-limit/hello-limit.yaml
+          requests:
+            cpu: "1200m"
+            memory: 20Mi
+oc get pods
+oc scale --replicas 4 deployment/hello-limit
+oc get pods
+oc get events --field-selector type=Warning
+oc delete all -l app=hello-limit
+
+
+2)
+oc create --save-config  -f ~/DO280/labs/schedule-limit/loadtest.yaml
+oc get routes
+curl -X GET   http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/150/60
+oc adm top pod  
+curl -X GET  http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/200/60
+watch oc get pods 
+oc delete all -l app=loadtest
+
+
+3)
+oc login -u admin -p redhat
+oc create quota project-quota  --hard cpu="3",memory="1G",configmaps="3"   -n schedule-limit
+oc login -u developer -p developer
+
+for X in {1..4}
+    do
+    oc create configmap my-config${X} --from-literal key${X}=value${X}
+   done
+
+4)
+oc login -u admin -p redhat
+oc adm create-bootstrap-project-template   -o yaml > /tmp/project-template.yaml
+vi /home/student/DO280/labs/schedule-limit/quota-limits.yaml
+
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: ${PROJECT_NAME}-quota
+  spec:
+    hard:
+      cpu: 3
+      memory: 10G
+- apiVersion: v1
+  kind: LimitRange
+  metadata:
+    name: ${PROJECT_NAME}-limits
+  spec:
+    limits:
+      - type: Container
+        defaultRequest:
+          cpu: 30m
+          memory: 30M
+
+oc create -f /tmp/project-template.yaml   -n openshift-config
+oc edit projects.config.openshift.io/cluster
+spec:
+  projectRequestTemplate:
+    name: project-request
+watch oc get pods -n openshift-apiserver
+oc new-project template-test
+oc get resourcequotas,limitranges
+oc delete project schedule-limit
+oc delete project template-test
+lab schedule-limit finish
+
+```
