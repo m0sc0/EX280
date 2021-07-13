@@ -100,7 +100,7 @@ lab network-ingress finish
 
 ```
 
-### 5.06
+### 5.06 NETWORK POLICIES DENY TRAFFIC
 ```
 lab network-policy start
 Login as dev
@@ -163,4 +163,113 @@ lab network-policy finish
 
 ```
 
- 
+### 5.07 TLS PASSTHROUGHT 
+```
+1)Create lab without restrictions
+lab network-review start
+
+Login as developer
+New project network-review
+cd ~/DO280/labs/network-review/
+add 'quay.io/redhattraining/php-ssl:v1.0' to php-http.yaml containerPort: 8080
+Create resourse
+Create route called php-http.apps.ocp4.example.com
+Test with firefox, it is unsecure!!
+
+2)
+vi ~/DO280/labs/network-review/deny-all.yaml with an empty pod selector to target all pods in the namespace
+Create resourse deny-all.yaml
+Test there is no access from workstation
+Create a network policy to allow ingress traffic to routes in the network-review namespace edit ~/DO280/labs/network-review/allow-from-openshift-ingress.yaml
+ingress with namespaceSelector and this match network.openshift.io/policy-group: ingress  (use oc explain)
+oc login -u admin -p redhat
+Label namespace default  network.openshift.io/policy-group=ingress
+curl -s http://php-http.apps.ocp4.example.com | grep "PHP"
+
+3) Secure with ca
+Login as dev
+cd certs
+Gen new certificate request with  training.key with subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=php-https.apps.ocp4.example.com" called  training.csr
+
+openssl x509 -req -in training.csr \
+    -CA training-CA.pem -CAkey training-CA.key -CAcreateserial \
+    -passin file:passphrase.txt \
+    -out training.crt -days 3650 -sha256 -extfile training.ext
+
+cd ~/DO280/labs/network-review
+create secret tls called php-certs  certs/training.crt  certs/training.key
+Get secrets
+vi ~/DO280/labs/network-review/php-https.yaml add image: 'quay.io/redhattraining/php-ssl:v1.1' containerPort: 8443  secretName: php-certs
+create php-https.yaml
+Create route passthrough called php-https  service php-https port 8443 hostname php-https.apps.ocp4.example.com
+oc get routes
+firefox https://php-https.apps.ocp4.example.com and curl -v --cacert certs/training-CA.pem https://php-https.apps.ocp4.example.com
+cd
+lab network-review grade
+lab network-review finish
+
+
+```
+
+
+```
+
+
+### SOLUTION
+```
+1)Create lab without restrictions
+lab network-review start
+oc login -u developer -p developer
+oc new-project network-review
+cd ~/DO280/labs/network-review/
+vi php-http.yaml and add image: 'quay.io/redhattraining/php-ssl:v1.0', containerPort: 8080
+oc create -f php-http.yaml
+oc expose svc php-http --hostname php-http.apps.ocp4.example.com
+Test with firefox
+
+2)Deny all and only from HostNetwork endpoint strategy, label the default namespace with the network.openshift.io/policy-group=ingress label.
+vi ~/DO280/labs/network-review/deny-all.yaml with an empty pod selector to target all pods in the namespace
+spec:
+  podSelector: {}
+
+oc create -f deny-all.yaml
+curl http://php-http.apps.ocp4.example.com
+vi ~/DO280/labs/network-review/allow-from-openshift-ingress.yaml
+  ingress:
+  - from:
+     - namespaceSelector:
+          matchLabels:
+             network.openshift.io/policy-group: ingress
+oc create -f allow-from-openshift-ingress.yaml
+oc login -u admin -p redhat
+oc label namespace default  network.openshift.io/policy-group=ingress
+curl -s http://php-http.apps.ocp4.example.com | grep "PHP"
+
+3) Secure with ca
+oc login -u developer -p developer
+cd certs
+openssl req -new -key training.key \
+    -subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/\
+    CN=php-https.apps.ocp4.example.com" \
+    -out training.csr
+
+openssl x509 -req -in training.csr \
+    -CA training-CA.pem -CAkey training-CA.key -CAcreateserial \
+    -passin file:passphrase.txt \
+    -out training.crt -days 3650 -sha256 -extfile training.ext
+
+cd ~/DO280/labs/network-review
+oc create secret tls php-certs --cert certs/training.crt  --key certs/training.key
+oc get secrets
+vi ~/DO280/labs/network-review/php-https.yaml add image: 'quay.io/redhattraining/php-ssl:v1.1' containerPort: 8443  secretName: php-certs
+oc create -f php-https.yaml
+oc create route passthrough php-https  --service php-https --port 8443 --hostname php-https.apps.ocp4.example.com
+oc get routes
+firefox https://php-https.apps.ocp4.example.com and curl -v --cacert certs/training-CA.pem https://php-https.apps.ocp4.example.com
+cd
+lab network-review grade
+lab network-review finish
+
+
+```
+
