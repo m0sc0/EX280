@@ -93,4 +93,7 @@ lab auth-rbac finish
 ```
 
 ### 3.05 is a mix of 3.02 and 3.04
-ToDo  
+ToDo 
+
+https://docs.openshift.com/container-platform/4.1/authentication/using-rbac.html
+oc delete secret kubeadmin -n kube-system 
