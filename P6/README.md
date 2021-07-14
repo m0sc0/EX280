@@ -207,3 +207,81 @@ oc delete project template-test
 lab schedule-limit finish
 
 ```
+
+
+
+### 6.06
+```
+1)
+lab schedule-scale start
+Login as dev
+New project schedule-scale
+Edit ~/DO280/labs/schedule-scale/loadtest.yaml  requests cpu 25m, mem 25Mi limits cpu:100m, mem 100Mi
+Create app
+Describe limits in pod
+Scale to 5 replicas, then to 1
+Create a horizontal autoscaler max 10 pods when cpu exceds 50% , and min 2 pods
+Watch horizontal autoscaler
+Add more load curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/api/loadtest/v1/cpu/1
+
+
+
+2)
+Create new app called scalind quay.io/redhattraining/scaling:v1.0 as deployment config
+Expose
+scale to 3 replicas
+Get route and firefox
+ ~/DO280/labs/schedule-scale/curl-route.sh
+oc delete project schedule-scale
+lab schedule-scale finish
+
+
+
+```
+
+
+### SOLUTION
+```
+1)
+lab schedule-scale start
+oc login -u developer -p developer
+oc new-project schedule-scale
+~/DO280/labs/schedule-scale/loadtest.yaml
+        resources:
+          requests:
+            cpu: "25m"
+            memory: 25Mi
+          limits:
+            cpu: "100m"
+            memory: 100Mi
+oc create --save-config   -f ~/DO280/labs/schedule-scale/loadtest.yaml
+oc get pods
+oc describe pod/loadtest-5f9565dbfb-jm9md | grep -A2 -E "Limits|Requests"
+oc scale --replicas 5 deployment/loadtest
+oc get pods
+oc scale --replicas 1 deployment/loadtest
+oc autoscale deployment/loadtest  --min 2 --max 10 --cpu-percent 50
+watch oc get hpa/loadtest
+oc get route/loadtest
+curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/api/loadtest/v1/cpu/1
+watch oc get hpa/loadtest
+
+
+
+2)
+oc new-app --name scaling --as-deployment-config  --docker-image quay.io/redhattraining/scaling:v1.0
+oc expose svc/scaling
+oc scale --replicas 3 dc/scaling
+oc get pods -o wide -l deploymentconfig=scaling
+oc get route/scaling
+ ~/DO280/labs/schedule-scale/curl-route.sh
+Firefox the route
+oc get hpa/loadtest 
+oc delete project schedule-scale
+lab schedule-scale finish
+
+
+
+```
+
+
