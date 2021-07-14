@@ -230,7 +230,7 @@ Add more load curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/a
 Create new app called scalind quay.io/redhattraining/scaling:v1.0 as deployment config
 Expose
 scale to 3 replicas
-Get route and firefox
+Get route and curl to see ip of pod attending
  ~/DO280/labs/schedule-scale/curl-route.sh
 oc delete project schedule-scale
 lab schedule-scale finish
@@ -275,7 +275,7 @@ oc scale --replicas 3 dc/scaling
 oc get pods -o wide -l deploymentconfig=scaling
 oc get route/scaling
  ~/DO280/labs/schedule-scale/curl-route.sh
-Firefox the route
+curl the route
 oc get hpa/loadtest 
 oc delete project schedule-scale
 lab schedule-scale finish
@@ -284,4 +284,70 @@ lab schedule-scale finish
 
 ```
 
+### 6.07
+```
+1)
+lab schedule-review start
+Login as admin
+label node master01 tier=gold
+label node master02 tier=silver
+Check
 
+
+2)
+Login as dev
+Create project schedule-review
+Create deployment called loadtest image quay.io/redhattraining/loadtest:v1.0 save to ~/DO280/labs/schedule-review/loadtest.yaml
+vim ~/DO280/labs/schedule-review/loadtest.yaml add node selector tier silver and request cpu 200m and meem 20Mi
+Create loadtest.yaml
+Check pod requests
+Create svc by exposing deployment port 80 target port 8080
+curl http://loadtest-schedule-review.apps.ocp4.example.com/api/loadtest/v1/healthz
+autoscale deployment name loadtest min 2 max 40 cpu 70%
+watch oc get hpa/loadtest
+curl -X GET http://loadtest-schedule-review.apps.ocp4.example.com/api/loadtest/v1/cpu/3
+
+3)
+Login as admin -p redhat
+Create quota review-quota  hard cpu="1",memory="2G",pods="20"
+lab schedule-review grade
+lab schedule-review finish
+
+
+```
+
+
+### SOLUTION
+```
+1)
+lab schedule-review start
+oc login -u admin -p redhat
+oc get nodes -L tier
+oc label node master01 tier=gold
+oc label node master02 tier=silver
+oc get nodes -L tier
+
+2)
+oc login -u developer -p developer
+oc new-project schedule-review
+oc create deployment loadtest --dry-run=client   --image quay.io/redhattraining/loadtest:v1.0   -o yaml > ~/DO280/labs/schedule-review/loadtest.yaml
+vim ~/DO280/labs/schedule-review/loadtest.yaml add node selector tier silver and request cpu 200m and meem 20Mi
+oc create --save-config   -f ~/DO280/labs/schedule-review/loadtest.yaml
+oc describe pod/loadtest-85f7669897-z4mq7   | grep -A2 Requests
+oc expose deployment/loadtest   --port 80 --target-port 8080
+oc get route/loadtest
+curl http://loadtest-schedule-review.apps.ocp4.example.com/api/loadtest/v1/healthz
+oc autoscale deployment/loadtest --name loadtest  --min 2 --max 40 --cpu-percent 70
+watch oc get hpa/loadtest
+curl -X GET http://loadtest-schedule-review.apps.ocp4.example.com/api/loadtest/v1/cpu/3
+
+3)
+oc login -u admin -p redhat
+oc create quota review-quota  --hard cpu="1",memory="2G",pods="20"
+lab schedule-review grade
+lab schedule-review finish
+
+
+
+
+```
