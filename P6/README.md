@@ -298,7 +298,7 @@ Check
 Login as dev
 Create project schedule-review
 Create deployment called loadtest image quay.io/redhattraining/loadtest:v1.0 save to ~/DO280/labs/schedule-review/loadtest.yaml
-vim ~/DO280/labs/schedule-review/loadtest.yaml add node selector tier silver and request cpu 200m and meem 20Mi
+vim ~/DO280/labs/schedule-review/loadtest.yaml add node selector tier silver and request cpu 100m and meem 20Mi
 Create loadtest.yaml
 Check pod requests
 Create svc by exposing deployment port 80 target port 8080
@@ -331,10 +331,22 @@ oc get nodes -L tier
 oc login -u developer -p developer
 oc new-project schedule-review
 oc create deployment loadtest --dry-run=client   --image quay.io/redhattraining/loadtest:v1.0   -o yaml > ~/DO280/labs/schedule-review/loadtest.yaml
-vim ~/DO280/labs/schedule-review/loadtest.yaml add node selector tier silver and request cpu 200m and meem 20Mi
+vim ~/DO280/labs/schedule-review/loadtest.yaml 
+    spec:
+      nodeSelector:
+        tier: silver
+      containers:
+      - image: quay.io/redhattraining/loadtest:v1.0
+        name: loadtest
+        resources:
+          requests:
+            cpu: "100m"
+            memory: 20Mi
+
 oc create --save-config   -f ~/DO280/labs/schedule-review/loadtest.yaml
 oc describe pod/loadtest-85f7669897-z4mq7   | grep -A2 Requests
 oc expose deployment/loadtest   --port 80 --target-port 8080
+oc expose service/loadtest --name loadtest
 oc get route/loadtest
 curl http://loadtest-schedule-review.apps.ocp4.example.com/api/loadtest/v1/healthz
 oc autoscale deployment/loadtest --name loadtest  --min 2 --max 40 --cpu-percent 70
