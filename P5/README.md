@@ -163,6 +163,11 @@ lab network-policy finish
 
 ```
 
+
+
+
+
+
 ### 5.07 TLS PASSTHROUGHT 
 ```
 1)Create lab without restrictions
@@ -212,10 +217,9 @@ lab network-review finish
 ```
 
 
-```
-
 
 ### SOLUTION
+
 ```
 1)Create lab without restrictions
 lab network-review start
