@@ -25,6 +25,7 @@ Delete manager user
 List users
 List identities
 Delete all users and identities and the secret
+lab auth-provider finish
 ```
 
 ### SOLUTION
@@ -50,6 +51,7 @@ oc get identity
 oc delete user --all
 oc delete identity --all
 oc delete secret localusers -n openshift-config
+lab auth-provider finish
 
 ```
 
@@ -74,6 +76,7 @@ oc get clusterrolebinding
 oc describe clusterrolebindings self-provisioners
 oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
 oc policy add-role-to-user admin leader
+oc describe rolebindings | grep -B 9 leader
 oc adm groups new dev-group
 oc adm groups add-users dev-group developer
 oc adm groups new qa-group

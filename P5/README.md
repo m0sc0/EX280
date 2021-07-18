@@ -42,13 +42,16 @@ Create from file ~/DO280/labs/network-ingress/todo-app-v1.yaml
 Expose svc todo-http with hostname todo-http.apps.ocp4.example.com
 Test url
 Intercept comunication
-Now create a secure route with edge 
+Now create a secure route with edge called todo-https  hostname todo-https.apps.ocp4.example.com
 curl
 Test with firefox
+cd ~/DO280/labs/network-ingress
+Login as admin
 Extract router-ca secret in namespace openshift-ingress-operator
 curl with crt
 Login again with developer and see that the comunication between pod and router is not encripted use debug with registry.access.redhat.com/ubi8/ubi:8.0
 Delete edge route
+cd certs
 Generate private key called training.key 2048
 CSR with name training.csr with key training.key subjet "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=todo-https.apps.ocp4.example.com"
 Generate signed certificate
@@ -186,7 +189,7 @@ vi ~/DO280/labs/network-review/deny-all.yaml with an empty pod selector to targe
 Create resourse deny-all.yaml
 Test there is no access from workstation
 Create a network policy to allow ingress traffic to routes in the network-review namespace edit ~/DO280/labs/network-review/allow-from-openshift-ingress.yaml
-ingress with namespaceSelector and this match network.openshift.io/policy-group: ingress  (use oc explain)
+ingress with namespaceSelector and this match label network.openshift.io/policy-group: ingress  (use oc explain)
 oc login -u admin -p redhat
 Label namespace default  network.openshift.io/policy-group=ingress
 curl -s http://php-http.apps.ocp4.example.com | grep "PHP"
@@ -195,11 +198,7 @@ curl -s http://php-http.apps.ocp4.example.com | grep "PHP"
 Login as dev
 cd certs
 Gen new certificate request with  training.key with subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=php-https.apps.ocp4.example.com" called  training.csr
-
-openssl x509 -req -in training.csr \
-    -CA training-CA.pem -CAkey training-CA.key -CAcreateserial \
-    -passin file:passphrase.txt \
-    -out training.crt -days 3650 -sha256 -extfile training.ext
+Gen the x509 certificate with file:passphrase days 3650 
 
 cd ~/DO280/labs/network-review
 create secret tls called php-certs  certs/training.crt  certs/training.key
