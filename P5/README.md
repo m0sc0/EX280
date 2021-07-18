@@ -54,7 +54,7 @@ Delete edge route
 cd certs
 Generate private key called training.key 2048
 CSR with name training.csr with key training.key subjet "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=todo-https.apps.ocp4.example.com"
-Generate signed certificate
+Generate signed certificate with 1825 days sha256 
 Create secret tls called todo-certs  with crt and key 
 Create todo-app-v2.yaml
 Create passtrought route port 8443 hostname todo-https.apps.ocp4.example.com
