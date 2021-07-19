@@ -33,6 +33,11 @@ lab auth-provider finish
 ```
 htpasswd -c -b -B   ~/DO280/labs/auth-provider/htpasswd admin redhat
 htpasswd -b  ~/DO280/labs/auth-provider/htpasswd developer developer
+o
+vi usuarios
+cat usuarios | while read USER PWD; do echo $USER $PWD; htpasswd -B -b /home/student/DO280/labs/auth-provider/htpasswd $USER $PWD; done
+cat usuarios | while read USER PWD; do echo $USER $PWD; oc login -u $USER -p $PWD; done
+
 oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com:6443
 oc create secret generic localusers --from-file htpasswd=/DO280/labs/auth-provider/htpasswd -n opneshift-config
 oc adm policy add-cluster-role-to-user cluster-admin admin
@@ -101,4 +106,7 @@ lab auth-rbac finish
 ToDo 
 
 https://docs.openshift.com/container-platform/4.1/authentication/using-rbac.html
+Delete kubeadmin account
 oc delete secret kubeadmin -n kube-system 
+Add developer to create projects
+oc adm policy add-cluster-role-to-user self-provisioner developer
