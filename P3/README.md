@@ -81,6 +81,11 @@ lab auth-rbac start
 oc login -u admin -p redhat
 oc get clusterrolebinding
 oc describe clusterrolebindings self-provisioners
+oc edit clusterrolebindings self-provisioners
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "false"
+Para que no vuelva a recrearse este archivo en el reinicio del cluster
+
 oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
 oc policy add-role-to-user admin leader
 oc describe rolebindings | grep -B 9 leader
