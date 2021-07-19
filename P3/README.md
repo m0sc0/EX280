@@ -34,7 +34,7 @@ lab auth-provider finish
 htpasswd -c -b -B   ~/DO280/labs/auth-provider/htpasswd admin redhat
 htpasswd -b  ~/DO280/labs/auth-provider/htpasswd developer developer
 oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com:6443
-oc create secret generic localusers --from-file=DO280/labs/auth-provider/htpasswd -n opneshift-config
+oc create secret generic localusers --from-file htpasswd=/DO280/labs/auth-provider/htpasswd -n opneshift-config
 oc adm policy add-cluster-role-to-user cluster-admin admin
 oc edit oauth cluster
 oc login -u admin -p redhat
