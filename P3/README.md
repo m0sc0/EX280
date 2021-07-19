@@ -6,6 +6,7 @@ source /usr/local/etc/ocp4.config
 Use htpasswd to populate an auth with
 admin/redhat with bcrypt and save it to ~/DO280/labs/auth-provider/htpasswd
 Add developer/developer user
+oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com:6443
 Create a secret from the file called  localusers in namespace openshift-config 
 Asign admin user to cluster-admin role
 
@@ -32,6 +33,7 @@ lab auth-provider finish
 ```
 htpasswd -c -b -B   ~/DO280/labs/auth-provider/htpasswd admin redhat
 htpasswd -b  ~/DO280/labs/auth-provider/htpasswd developer developer
+oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com:6443
 oc create secret generic localusers --from-file=DO280/labs/auth-provider/htpasswd -n opneshift-config
 oc adm policy add-cluster-role-to-user cluster-admin admin
 oc edit oauth cluster
