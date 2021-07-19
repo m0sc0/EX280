@@ -35,8 +35,10 @@ htpasswd -c -b -B   ~/DO280/labs/auth-provider/htpasswd admin redhat
 htpasswd -b  ~/DO280/labs/auth-provider/htpasswd developer developer
 o
 vi usuarios
+touch /home/student/DO280/labs/auth-provider/htpasswd
 cat usuarios | while read USER PWD; do echo $USER $PWD; htpasswd -B -b /home/student/DO280/labs/auth-provider/htpasswd $USER $PWD; done
 cat usuarios | while read USER PWD; do echo $USER $PWD; oc login -u $USER -p $PWD; done
+oc get pods -n openshift-authentication
 
 oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com:6443
 oc create secret generic localusers --from-file htpasswd=/DO280/labs/auth-provider/htpasswd -n opneshift-config
