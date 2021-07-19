@@ -1,4 +1,6 @@
 ## OPENSHIFT AUTH
+#### Atencion oc extract, oc set data ..
+
 ### 3.02 In this lab we will attach an Identity Provider  
 ```
 lab auth-provider start
