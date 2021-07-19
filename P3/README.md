@@ -75,7 +75,7 @@ Remove cluster role self-provisioners from all user who are no cluster admins
 Add admin role to user leader/redhat in aut-rbac project
 Create dev-group with developer user and qa-group with qa-engineer
 Add policy edit to dev-group, and view to qa-group.
-Login with developer and create a app with httpd:2.44 image then try to scale deployment with 3 replicas
+Login with developer and create a app with httpd:2.4 image then try to scale deployment with 3 replicas
 
 Restore project creation privileges to all users
 ```
@@ -105,7 +105,7 @@ oc policy add-role-to-group edit dev-group
 oc policy add-role-to-group view qa-group
 oc get rolebindings -o wide
 oc login -u developer -p developer
-oc new-app --name httpd httpd:2.44
+oc new-app --name httpd httpd:2.4
 oc login -u qa-engineer -p redhat
 oc scale deployment httpd --replicas 3
 

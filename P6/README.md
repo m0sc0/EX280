@@ -286,6 +286,8 @@ lab schedule-scale finish
 
 ### 6.07
 ```
+https://docs.openshift.com/container-platform/3.6/admin_guide/limits.html
+
 1)
 lab schedule-review start
 Login as admin
