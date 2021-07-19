@@ -11,14 +11,7 @@ Create a secret from the file called  localusers in namespace openshift-config
 Asign admin user to cluster-admin role
 
 Add to oauth cluster
-spec:
-  identityProviders:
-  - htpasswd:
-      fileData:
-        name: localusers
-    mappingMethod: claim
-    name: myusers
-    type: HTPasswd
+
 Login with admin user test nodes
 Login with dev and test nodes
 Add manager user with random pass and login
@@ -44,6 +37,15 @@ oc login -u kubeadmin -p ${RHT_OCP4_KUBEADM_PASSWD} https://api.ocp4.example.com
 oc create secret generic localusers --from-file htpasswd=/DO280/labs/auth-provider/htpasswd -n opneshift-config
 oc adm policy add-cluster-role-to-user cluster-admin admin
 oc edit oauth cluster
+spec:
+  identityProviders:
+  - htpasswd:
+      fileData:
+        name: localusers
+    mappingMethod: claim
+    name: myusers
+    type: HTPasswd
+
 oc login -u admin -p redhat
 oc get nodes
 oc login -u developer -p developer
