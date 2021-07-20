@@ -143,6 +143,7 @@ vim ~/DO280/labs/schedule-limit/hello-limit.yaml
           requests:
             cpu: "1200m"
             memory: 20Mi
+oc replace -f ~/DO280/labs/schedule-limit/hello-limit.yaml
 oc get pods
 oc scale --replicas 4 deployment/hello-limit
 oc get pods
