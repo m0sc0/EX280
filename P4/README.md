@@ -69,3 +69,41 @@ lab authorization-scc finish
 ```
 
 ### 4.05 4.02 + 4.04
+```
+1)
+lab authorization-review start
+oc login -u developer -p developer https://api.ocp4.example.com:6443
+oc new-project authorization-review
+Create a secret called review-secret with key-value pairs: user=wpuser, password=redhat123, and database=wordpress
+oc create secret generic review-secret --from-literal=user=wpuser --from-literal=password=redhat123 --from-literal=database=wordpress
+Create app with image registry.access.redhat.com/rhscl/mysql-57-rhel7:5.7-47 called mysql, modify deployment to use review-secret as env variables  
+oc new-app mysql --docker-image registry.access.redhat.com/rhscl/mysql-57-rhel7:5.7-47 
+with prefix MYSQL_
+oc set env deployment mysql --from=secret/review-secret --prefix=MYSQL_
+oc get pods to view if starts ok
+
+2)
+Deploy a wordpress app called wordpress using the image quay.io/redhattraining/wordpress:5.3.0
+with envs WORDPRESS_DB_HOST=mysql- and WORDPRESS_DB_NAME=wordpress.
+
+oc new-app --name wordpress --docker-image quay.io/redhattraining/wordpress:5.3.0 -e WORDPRESS_DB_HOST=mysql -e WORDPRESS_DB_NAME=wordpress
+
+Once deployed modify template ans use  review-secret to set env with WORDPRESS_DB_ prefix.
+oc set env --from=secret/review-secret --prefix=WORDPRESS_DB deployment wordpress
+
+By default, OpenShift prevents pods from starting services that listen on ports lower than 1024
+Fix with adm and scc wordpress-sa 
+
+oc login -u admin -p redhat
+
+oc create sa wordpress-sa
+oc adm policy add-scc-to-user anyuid -z wordpress-sa
+
+oc set serviceaccount deployment wordpress wordpress-sa
+
+
+Expose service wordpress   hostname wordpress-review.apps.ocp4.example.com
+http://wordpress-review.apps.ocp4.example.com/wp-admin/install.php
+lab authorization-review grade
+lab authorization-review finish
+```
