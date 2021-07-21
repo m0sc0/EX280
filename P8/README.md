@@ -67,8 +67,8 @@ The pod with request for 500m and could grow up to the limit 1 cpu
 https://docs.openshift.com/container-platform/4.7/applications/quotas/quotas-setting-per-project.html  
 
 +---------------------------------------------------------------------------------------------------------------------+  
-| cpu == request.cpu												      |  
-| memory == request.memory:   The sum of all cpu request of pods 						      |  
+| cpu == request.cpu                                                                                                  |  
+| memory == request.memory:   The sum of all cpu request of pods                                                      |  
 | limits.cpu:                 The sum of CPU limits across all pods in a non-terminal state cannot exceed this value. |  
 +---------------------------------------------------------------------------------------------------------------------+  
 
