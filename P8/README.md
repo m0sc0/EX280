@@ -40,6 +40,7 @@ spec:
         memory: "100Mi" 
       maxLimitRequestRatio:
         cpu: "10" 
+```
 
 +---------------------------------------------------------------------------------------------------------------------+  
 | default:  	  The default amount of CPU that a container will be !!!!limited!!!! to use if not specified.  
