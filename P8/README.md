@@ -68,7 +68,7 @@ https://docs.openshift.com/container-platform/4.7/applications/quotas/quotas-set
 
 +---------------------------------------------------------------------------------------------------------------------+  
 | cpu == request.cpu                                                                                                  |  
-| memory == request.memory:   The sum of all cpu request of pods                                                      |  
+| memory == request.memory:   The sum of all cpu request of pods                                                  i    |  
 | limits.cpu:                 The sum of CPU limits across all pods in a non-terminal state cannot exceed this value. |  
 +---------------------------------------------------------------------------------------------------------------------+  
 
