@@ -41,7 +41,7 @@ spec:
       maxLimitRequestRatio:
         cpu: "10" 
 ```
-
+```
 +---------------------------------------------------------------------------------------------------------------------+  
 | default:  	  The default amount of CPU that a container will be !!!!limited!!!! to use if not specified.  
 | defaultRequest: The default amount of CPU that a container will request to use if not specified.  
@@ -49,7 +49,7 @@ spec:
 | default is the limit if pod no specified cpu or memory  
 | defaultrequest is the minimun if no especified.  
 +---------------------------------------------------------------------------------------------------------------------+  
-
+```
 
 ```
 apiVersion: v1
@@ -65,13 +65,13 @@ The pod with request for 500m and could grow up to the limit 1 cpu
 
 ## Quota  
 https://docs.openshift.com/container-platform/4.7/applications/quotas/quotas-setting-per-project.html  
-
+```
 +---------------------------------------------------------------------------------------------------------------------+  
 | cpu == request.cpu                                                                                                  |  
-| memory == request.memory:   The sum of all cpu request of pods                                                  i    |  
+| memory == request.memory:   The sum of all cpu request of pods                                                      |  
 | limits.cpu:                 The sum of CPU limits across all pods in a non-terminal state cannot exceed this value. |  
 +---------------------------------------------------------------------------------------------------------------------+  
-
+```
 oc create quota quota-test --hard=pods=4,cpu=3,replicationcontrollers=3,services=3,requests.cpu=2,requests.memory=2Gi  
 
 
