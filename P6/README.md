@@ -24,7 +24,7 @@ Delete project
 remove label env to nodes
 login as dev
 switch to schedule-pods-ts
-get pods and describe node and solve issue
+get pods and describe node and solve issue Pods only run in nodes with label client=ACME
 lab schedule-pods finish
 
 
@@ -60,7 +60,7 @@ oc delete project schedule-pods
 
 4)
 oc login -u admin -p redhat
-oc label node -l env env-
+oc label node -l env env- o oc label nodes --all env-
 oc login -u developer -p developer
 oc project schedule-pods-ts
 oc get pods
@@ -90,9 +90,11 @@ Delete all with label app=hello-limit
 
 
 2)
-Create the resource ~/DO280/labs/schedule-limit/loadtest.yaml
+Create the resource ~/DO280/labs/schedule-limit/loadtest.yaml, if the pod exceds 200Mi mem will be restarted and if we describe pod, OOMKilled appears
 curl -X GET   http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/150/60
 http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/200/60
+watch oc adm top pod
+oc delete all -l app=loadtest
 
 3) 
 Login as admin/redhat
@@ -103,17 +105,23 @@ Generate 4 configs maps
 4)
 Login as admin/redhat
 create-bootstrap-project-template   -o yaml > /tmp/project-template.yaml
-Add 3cpu and 10Gi in hard of quota
-Add limit rangue 
-name: ${PROJECT_NAME}-limit and Quota
-defaultRequest: cpu: 30m memory: 30M
-oc create -f /tmp/project-template.yaml   -n openshift-config
+Quota:
+Add 3cpu and 10Gi in hard
+name: ${PROJECT_NAME}-quota
 
-oc edit projects.config.openshift.io/cluster
-spec:
-  projectRequestTemplate:
-    name: project-request
+Limit range:
+name: ${PROJECT_NAME}-limits
+defaultRequest: cpu: 30m and memory: 30M
+
+/tmp/project-template.yaml   -n openshift-config
+
+
+Add template project-request to project  cluster (help with gui)
+
 New-project template-test
+
+oc get pods -n openshift-apiserver
+
 Get resourcequotas,limitranges
 delete project schedule-limit
 delete project template-test
