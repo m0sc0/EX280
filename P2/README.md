@@ -68,3 +68,17 @@ oc delete pvc postgresql-storage
 lab install-storage finish
 
 ```
+
+# VOLUMES
+```
+deployment
+spec:
+  containers:
+    volumeMounts:
+    - mountPath: /var/lib/psql
+      name: mosco
+  volumes:
+  - name: mosco
+    persistentVolumeClaim:
+     claimName: mosco-pvc
+```

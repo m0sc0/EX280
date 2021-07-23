@@ -48,8 +48,8 @@ curl
 Test with firefox
 cd ~/DO280/labs/network-ingress
 Login as admin
-Extract router-ca secret in namespace openshift-ingress-operator
-curl with crt
+Extract router secret and use it with curl crt (help get secrets all namespaces router)
+
 Login again with developer and see that the comunication between pod and router is not encripted use debug with registry.access.redhat.com/ubi8/ubi:8.0
 Delete edge route
 cd certs
@@ -57,7 +57,7 @@ Generate private key called training.key 2048
 CSR with name training.csr with key training.key subjet "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/CN=todo-https.apps.ocp4.example.com"
 Generate signed certificate with 1825 days sha256 
 Create secret tls called todo-certs  with crt and key 
-Create todo-app-v2.yaml
+Create todo-app-v2.yaml (add volume and mount to /usr/local/etc/ssl/certs)
 Create passtrought route port 8443 hostname todo-https.apps.ocp4.example.com
 curl with certs/training-CA.pem  the route
 cd
