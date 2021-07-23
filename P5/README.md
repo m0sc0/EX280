@@ -95,6 +95,7 @@ openssl x509 -req -in training.csr   -passin file:passphrase.txt    -CA training
 cd ~/DO280/labs/network-ingress
 oc create secret tls todo-certs    --cert certs/training.crt   --key certs/training.key
 oc create -f todo-app-v2.yaml
+(If ask add secret to deploy do: oc set volume deployment/todo-https --add -m /usr/local/etc/ssl/certs --secret-name todo-certs --name tls-certs)
 oc describe pod todo-https-xxxx
 oc create route passthrough todo-https  --service todo-https --port 8443   --hostname todo-https.apps.ocp4.example.com
 curl -vvI   --cacert certs/training-CA.pem   https://todo-https.apps.ocp4.example.com
