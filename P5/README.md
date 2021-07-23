@@ -9,7 +9,7 @@ Create todo-db.yaml and cp db-data.sql to mysql pod at tmp/
 Copy yo items db de sql
 Create todo-frontend.yaml
 Expose frontend svc  --hostname todo.apps.ocp4.example.com
-Oc Debug why is not working (curl -v telnet://172.30.103.29:3306 and 8080 to frontend)
+Oc Debug why is not working (curl -v telnet://172.30.103.29:3306 and :8080/todo/ to frontend)
 Use if no curl registry.access.redhat.com/ubi8/ubi:8.0
 ```
 
@@ -29,7 +29,8 @@ oc logs frontend
 curl -v telnet://172.30.103.29:3306
 oc debug -t deployment/mysql  --image registry.access.redhat.com/ubi8/ubi:8.0 (because have not curl)
 
-oc edit svc/frontend
+oc describe svc frontend ( It shows Enpoints: <none>)
+oc edit svc/frontend change name: api to name: frontend
 lab network-sdn finish
 ```
 ### 5.04  
