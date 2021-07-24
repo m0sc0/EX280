@@ -72,9 +72,9 @@ lab auth-provider finish
 
 ```
 Remove cluster role self-provisioners from all user who are no cluster admins
-Add admin role to user leader/redhat in aut-rbac project
+Add admin role to user leader/redhat in auth-rbac project if not exists create project
 Create dev-group with developer user and qa-group with qa-engineer
-Add policy edit to dev-group, and view to qa-group.
+Add policy edit to dev-group, and view to qa-group in the project auth-rbac
 Login with developer and create a app with httpd:2.4 image then try to scale deployment with 3 replicas
 
 Restore project creation privileges to all users
@@ -101,7 +101,8 @@ oc adm groups new qa-group
 oc adm groups add-users qa-group qa-engineer
 oc get groups
 oc login -u leader -p redhat
-oc policy add-role-to-group edit dev-group
+oc new-project auth-rbac
+oc policy add-role-to-group edit dev-group (if you are in another project do -n auth-rbac)
 oc policy add-role-to-group view qa-group
 oc get rolebindings -o wide
 oc login -u developer -p developer
