@@ -12,6 +12,11 @@ Add a volume with the secret to the deployment mounted in /run/secrets/mysql
  
 Create a app called quotes with this image quay.io/redhattraining/famous-quotes:2.1
 Add QUOTES PREFIX and use the same secret/mysql
+
+Expose service with --hostname quotes.apps.ocp4.example.com
+Curl
+oc delete project authorization-secrets
+lab authorization-secrets finish
 ```
 
 

@@ -8,10 +8,11 @@ admin:            A project manager. If used in a local binding, an admin has ri
 
 basic-user: 	  A user that can get basic information about projects and users.
 cluster-status:   A user that can get basic cluster status information.
-edit:             A user that can modify most objects in a project but does not have the power to view or modify roles or bindings.
+edit:             A user that can modify most objects in a project but does not have the power to view or modify roles or bindings.(can create new-app)
 view: 		  A user who cannot make any modifications, but can see most objects in a project. They cannot view or modify roles or bindings.
 
 * only this can create projects
+** edit can create new-apps, also admin and self-provisioner
 ```
 
 oc get clusterrolebindings |grep self
