@@ -12,7 +12,7 @@ edit:             A user that can modify most objects in a project but does not 
 view: 		  A user who cannot make any modifications, but can see most objects in a project. They cannot view or modify roles or bindings.
 
 * only this can create projects
-** edit can create new-apps, also admin and self-provisioner
+** edit can create new-apps, also admin, cluster-admin and self-provisioner
 ```
 
 oc get clusterrolebindings |grep self
