@@ -1,7 +1,7 @@
 # Limits & Quota 
 
 
-## Limits
+## Limits (max, min etc for a single pod, container)
 
 https://docs.openshift.com/container-platform/3.6/admin_guide/limits.html  
 https://github.com/acsulli/ocp-4-resource-management  
@@ -40,6 +40,18 @@ spec:
         memory: "100Mi" 
       maxLimitRequestRatio:
         cpu: "10" 
+    - type: openshift.io/Image (7)
+      max:
+        storage: 1Gi
+    - type: openshift.io/ImageStream (8)
+      max:
+        openshift.io/image-tags: 10
+        openshift.io/images: 20
+    - type: "PersistentVolumeClaim" (9)
+      min:
+        storage: "1Gi"
+      max:
+        storage: "50Gi"
 ```
 ```
 +---------------------------------------------------------------------------------------------------------------------+  
@@ -63,7 +75,7 @@ https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-pra
 The pod with request for 500m and could grow up to the limit 1 cpu
 ```
 
-## Quota  
+## Quota (For all pods in a project) 
 https://docs.openshift.com/container-platform/4.7/applications/quotas/quotas-setting-per-project.html  
 ```
 +---------------------------------------------------------------------------------------------------------------------+  
@@ -74,4 +86,31 @@ https://docs.openshift.com/container-platform/4.7/applications/quotas/quotas-set
 ```
 oc create quota quota-test --hard=pods=4,cpu=3,replicationcontrollers=3,services=3,requests.cpu=2,requests.memory=2Gi  
 
+## Quota for all projects that is own by user or with a label in namespace
+https://www.opentlc.com/labs/ocp4_advanced_deployment/08_2_Quotas_LimitRanges_Templates_Solution_Lab.html
+```
+To all projects that user developer has
+oc create clusterresourcequota user-dev  --project-annotation-selector openshift.io/requester=developer --hard pods=12,secrets=20
 
+oc login -u developer 
+oc new-project test
+oc describe clusterresourcequota user-dev
+.
+.
+Namespace Selector: [test]
+AnnotationSelector: map[openshift.io/requester:developer]
+
+
+
+
+To all projects with label
+oc create clusterresourcequota env-qa  --project-label-selector environment=qa --hard pods=10,services=5
+
+oc new-project test
+oc label namespace test environment=qa
+oc describe clusterresourcequota env-qa
+.
+.
+Namespace Selector: [test]
+
+```
