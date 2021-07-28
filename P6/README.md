@@ -174,10 +174,7 @@ oc login -u admin -p redhat
 oc create quota project-quota  --hard cpu="3",memory="1G",configmaps="3"   -n schedule-limit
 oc login -u developer -p developer
 
-for X in {1..4}
-    do
-    oc create configmap my-config${X} --from-literal key${X}=value${X}
-   done
+for X in {1..4}; do oc create configmap my-config${X} --from-literal key${X}=value${X} ; done
 
 4)
 oc login -u admin -p redhat
@@ -230,7 +227,7 @@ Create app
 Describe limits in pod
 Scale to 5 replicas, then to 1
 Create a horizontal autoscaler max 10 pods when cpu exceds 50% , and min 2 pods
-Watch horizontal autoscaler
+Watch horizontal autoscaler (must have request in deployment to getout of unknown in oc get hpa)
 Add more load curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/api/loadtest/v1/cpu/1
 
 
