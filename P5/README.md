@@ -133,6 +133,7 @@ Allow ~/DO280/labs/network-policy/allow-specific.yaml
 Allow traffic from  sample-app in network-test to hello pod , port 8080 TCP
 (Help: it says traffic to hello pod, so network policy must be in hello namespace)
 
+Allow traffic to expose route from host
 Login with admin and label name=network-test th network-test namespace to match the allow-specific
 Test curl
 cd
