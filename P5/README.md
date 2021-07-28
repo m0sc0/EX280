@@ -244,6 +244,7 @@ spec:
 
 oc create -f deny-all.yaml
 curl http://php-http.apps.ocp4.example.com
+oc get namespaces openshift-ingress -o yaml | grep -i -A5 label
 vi ~/DO280/labs/network-review/allow-from-openshift-ingress.yaml
   ingress:
   - from:
