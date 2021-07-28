@@ -11,6 +11,7 @@ Create todo-frontend.yaml
 Expose frontend svc  --hostname todo.apps.ocp4.example.com
 Oc Debug why is not working (curl -v telnet://172.30.103.29:3306 and :8080/todo/ to frontend)
 Use if no curl registry.access.redhat.com/ubi8/ubi:8.0
+Note: On fixed from worstation I can curl url, but not the service, service is only from inside sdn
 ```
 
 
@@ -35,6 +36,8 @@ lab network-sdn finish
 ```
 ### 5.04  
 https://www.openshift.com/blog/self-serviced-end-to-end-encryption-approaches-for-applications-deployed-in-openshift  
+The --port in oc route passthrough is the port of the container to route.
+
 ```
 lab network-ingress start
 Login as developer   
@@ -128,6 +131,7 @@ Create file
 Verify that from worker cant curl hello-network-policy.apps.ocp4.example.com
 Allow ~/DO280/labs/network-policy/allow-specific.yaml 
 Allow traffic from  sample-app in network-test to hello pod , port 8080 TCP
+(Help: it says traffic to hello pod, so network policy must be in hello namespace)
 
 Login with admin and label name=network-test th network-test namespace to match the allow-specific
 Test curl
