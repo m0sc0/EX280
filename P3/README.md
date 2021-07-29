@@ -94,12 +94,18 @@ Para que no vuelva a recrearse este archivo en el reinicio del cluster
 
 oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
 oc policy add-role-to-user admin leader
-oc describe rolebindings | grep -B 9 leader
+
+To view roles we add
+oc get rolebindings.rbac 
+oc get rolebindings.rbac  edit -o yaml
+oc get rolebindings.rbac  view -o yaml
+
 oc adm groups new dev-group
 oc adm groups add-users dev-group developer
 oc adm groups new qa-group
 oc adm groups add-users qa-group qa-engineer
 oc get groups
+
 oc login -u leader -p redhat
 oc new-project auth-rbac
 oc policy add-role-to-group edit dev-group (if you are in another project do -n auth-rbac)
