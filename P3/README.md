@@ -71,6 +71,7 @@ lab auth-provider finish
 ### 3.04 Role Based Access Control  
 
 ```
+lab auth-rbac start
 Remove cluster role self-provisioners from all user who are no cluster admins
 Add admin role to user leader/redhat in auth-rbac project if not exists create project
 Create dev-group with developer user and qa-group with qa-engineer
@@ -78,6 +79,7 @@ Add policy edit to dev-group, and view to qa-group in the project auth-rbac
 Login with developer and create a app with httpd:2.4 image then try to scale deployment with 3 replicas
 
 Restore project creation privileges to all users
+lab auth-rbac finish
 ```
 
 ### SOLUTION
