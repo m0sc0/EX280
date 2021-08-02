@@ -8,8 +8,8 @@ https://docs.openshift.com/container-platform/4.1/networking/configuring-network
         Allow for MySQL database pods
         Allow ingress to ports 3306/tcp from cakephp-example-frontend namespace
 4. Allow Https, http to pod with label role=frontend
-5. allo traffic from namespace and pod name to podname
-
+5. Allow traffic from namespace project_name and pod foo to mosco
+6. Allow traffic from namespace project_name and also from pod in same namespace called foo
 ```
 1.
 spec: 
@@ -51,7 +51,7 @@ spec:
 spec:
   podSelector:
     matchLabels:
-      name: test-pods
+      name: mosco
   ingress:
     - from:
       - namespaceSelector:
@@ -59,6 +59,20 @@ spec:
             project: project_name
         podSelector:
           matchLabels:
-            name: test-pods
+            name: foo
+
+6.
+spec:
+  podSelector:
+    matchLabels:
+      name: mosco
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            project: project_name
+      - podSelector:
+          matchLabels:
+            name: foo
 
 ```
