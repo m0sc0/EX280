@@ -1,5 +1,6 @@
 # Certs  
 
+## Show certs
 openssl x509 -in ../26-05-2021/apps-ocp-term.crt -noout -text   
 openssl x509 -inform pem -in cerfile.cer -noout -text  
 openssl x509 -inform der -in cerfile.cer -noout -text  
