@@ -15,13 +15,13 @@ view: 		  A user who cannot make any modifications, but can see most objects in 
 ** edit can create new-apps, also admin, cluster-admin and self-provisioner
 ```
 
-oc get clusterrolebindings |grep self
-oc describe clusterolebindings self-provisioner
-oc get clusterrolebinfings self-provisioner -o yaml > backup.yaml
+oc get clusterrolebindings |grep self  
+oc describe clusterolebindings self-provisioner  
+oc get clusterrolebinfings self-provisioner -o yaml > backup.yaml  
 
-### Only user unit can create projects
-oc adm policy remove-cluster-role-from-group self-provisioner system:authentitcated:oauth
-oc adm policy add-cluster-role-to-user self-provisioner unit
+### Only user unit can create projects  
+oc adm policy remove-cluster-role-from-group self-provisioner system:authentitcated:oauth  
+oc adm policy add-cluster-role-to-user self-provisioner unit  
 
 ### Add group 
 oc adm groups new manages,tester,developers
